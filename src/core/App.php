@@ -35,8 +35,8 @@ class App
         }
 
         // Check if the controller file exists
-        if (file_exists('../src/controllers/' . $url[0] . '.php')) {
-            $this->controller = $url[0];
+        if (file_exists('../src/controllers/' . $url[0] . 'controller.php')) {
+            $this->controller = $url[0].'controller';
             unset($url[0]);
         } else {
             http_response_code(405);

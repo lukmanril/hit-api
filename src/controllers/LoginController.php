@@ -2,7 +2,7 @@
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
-class Login {
+class LoginController {
 
     // Constructor
     public function __construct()
