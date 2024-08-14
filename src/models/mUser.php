@@ -16,43 +16,38 @@ class mUser
         return $this->db->resultSet();
     }
 
-    public function find($id)
+    public function find()
     {
-        $this->db->query('SELECT * FROM ' . $this->table . ' WHERE id=:id');
-        $this->db->bind('id', $id);
+        $this->db->query('SELECT * FROM ' . $this->table . ' WHERE username=:username');
+        $this->db->bind('username', $_POST['username']);
         return $this->db->single();
     }
 
-    public function create($data)
+    public function create()
     {
-        $query = "INSERT INTO " . $this->table . " (nama, nrp, email, jurusan) VALUES (:nama, :nrp, :email, :jurusan)";
+        $query = "INSERT INTO " . $this->table . " (username, password) VALUES (:username, :password)";
         $this->db->query($query);
-        $this->db->bind('nama', $data['nama']);
-        $this->db->bind('nrp', $data['nrp']);
-        $this->db->bind('email', $data['email']);
-        $this->db->bind('jurusan', $data['jurusan']);
+        $this->db->bind('username', $_POST['username']);
+        $this->db->bind('password', password_hash($_POST['password'], PASSWORD_DEFAULT));
         $this->db->execute();
         return $this->db->rowCount();
     }
 
-    public function destroy($id)
+    public function update()
     {
-        $query = "DELETE FROM " . $this->table . " WHERE id=:id";
+        $query = "UPDATE " . $this->table . " SET password=:password WHERE username=:username";
         $this->db->query($query);
-        $this->db->bind('id', $id);
+        $this->db->bind('username', $_POST['username']);
+        $this->db->bind('password', password_hash($_POST['password'], PASSWORD_DEFAULT));
         $this->db->execute();
         return $this->db->rowCount();
     }
 
-    public function update($data)
+    public function destroy($username)
     {
-        $query = "UPDATE " . $this->table . " SET nama=:nama, nrp=:nrp, email=:email, jurusan=:jurusan WHERE id=:id";
+        $query = "DELETE FROM " . $this->table . " WHERE username=:username";
         $this->db->query($query);
-        $this->db->bind('id', $data['id']);
-        $this->db->bind('nama', $data['nama']);
-        $this->db->bind('nrp', $data['nrp']);
-        $this->db->bind('email', $data['email']);
-        $this->db->bind('jurusan', $data['jurusan']);
+        $this->db->bind('username', $username);
         $this->db->execute();
         return $this->db->rowCount();
     }

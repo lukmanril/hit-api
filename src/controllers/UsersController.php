@@ -1,6 +1,6 @@
 <?php
 
-class UsersController {
+class UsersController extends Controller {
 
     public function __construct()
     {
@@ -17,10 +17,11 @@ class UsersController {
                 }
                 break;
             case 'POST':
-                $this->create();
-                break;
-            case 'PUT':
-                $this->update($id);
+                if ($id != '') {
+                    $this->update();
+                } else {
+                    $this->create();
+                }
                 break;
             case 'DELETE':
                 $this->delete($id);
@@ -33,22 +34,37 @@ class UsersController {
     }
     
     public function create() {
-        http_response_code(201);
-        echo json_encode(['message' => 'Create User']);
+        if($this->model('mUser')->find()){
+            http_response_code(400);
+            echo json_encode(['message' => 'duplicate username', 'error' => 'error']);
+        }else{
+            if($this->model('mUser')->create()){
+                http_response_code(201);
+                echo json_encode(['message' => 'Create User']);
+            }else{
+                http_response_code(400);
+                echo json_encode(['message' => 'Bad Request', 'error' => 'error']);
+            }
+        }
     }
     
-    public function update($id) {
-        if ($id) {
-            http_response_code(200);
-            echo json_encode(['message' => 'Update User', 'id' => $id]);
-        } else {
+    public function update() {
+        if($this->model('mUser')->find()){
+            if($this->model('mUser')->update()){
+                http_response_code(201);
+                echo json_encode(['message' => 'Update User']);
+            }else{
+                http_response_code(400);
+                echo json_encode(['message' => 'Bad Request', 'error' => 'error']);
+            }
+        }else{
             http_response_code(400);
-            echo json_encode(['message' => 'Bad Request', 'error' => 'ID is required for update']);
+            echo json_encode(['message' => 'not found username', 'error' => 'error']);
         }
     }
     
     public function delete($id) {
-        if ($id) {
+        if($this->model('mUser')->destroy($id)){
             http_response_code(200);
             echo json_encode(['message' => 'Delete User', 'id' => $id]);
         } else {
