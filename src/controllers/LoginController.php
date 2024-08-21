@@ -2,7 +2,7 @@
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
-class LoginController {
+class LoginController extends Controller {
 
     // Constructor
     public function __construct()
@@ -48,16 +48,16 @@ class LoginController {
         
         $payload = [
             "username" => $row['username'],
+            "datetime" => date('Y-m-d H:i:s'),
         ];
         try {
             $token = JWT::encode($payload, SECRETKEY, 'HS256');
+
+            //menyimpan token ke dalam database
+            $this->model('mUser')->saveSessions($row['username'], $token);
+
             http_response_code(200);
-            echo json_encode(['message' => 'Login User', 'token' => $token]);
-            /*
-                echo json_encode(['message' => 'Login User', 'token' => $token]);
-                $token ditaruh di token.text aplikasi mobile
-                agar token bisa dipakai berulang ulang saat hit API
-            */
+            echo json_encode(['message' => 'Login User ' . date('Y-m-d H:i:s') . ' - ' . date('d-m-Y H:i:s', (time() + 3600 * 24)), 'token' => $token]);
         }catch (Exception $exception){
             http_response_code(401);
             echo json_encode(['message' => 'Unauthorized']);

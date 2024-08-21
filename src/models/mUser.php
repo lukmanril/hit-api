@@ -51,4 +51,20 @@ class mUser
         $this->db->execute();
         return $this->db->rowCount();
     }
+
+    public function saveSessions($username, $token) {
+        $query = "INSERT INTO sessions (username, token, tanggal) VALUES (:username, :token, :tanggal)";
+        $this->db->query($query);
+        $this->db->bind('tanggal', date('Y-m-d'));
+        $this->db->bind('username', $username);
+        $this->db->bind('token', $token);
+        return $this->db->single();
+    }
+
+    public function getSessions($token)
+    {
+        $this->db->query('SELECT * FROM sessions WHERE token=:token');
+        $this->db->bind('token', $token);
+        return $this->db->single();
+    }
 }

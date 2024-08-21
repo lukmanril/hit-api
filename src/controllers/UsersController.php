@@ -4,7 +4,11 @@ class UsersController extends Controller {
 
     public function __construct()
     {
-        
+        if(!$this->model('mUser')->getSessions($_GET['token'])){
+            http_response_code(401);
+            echo json_encode(['message' => 'Unauthorized']);
+            exit;
+        }
     }
 
     public function index($id = '') {
